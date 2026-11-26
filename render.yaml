@@ -1,9 +1,22 @@
-# Render Blueprint — backend web service (Docker).
+# Render Blueprint — backend web service (Docker) + frontend static site.
 # Deploy: Render Dashboard -> New -> Blueprint -> select this repo.
-# Then set LLM_API_KEYS (and optionally JWT_SECRET) in the service's
-# Environment tab. The frontend is deployed separately (see README ->
-# "Deploy the frontend") with VITE_API_URL pointing at this service's URL.
+# Then set LLM_API_KEYS (and optionally JWT_SECRET) in the backend
+# service's Environment tab. The frontend static site builds with
+# VITE_API_URL pointing at the backend service's URL.
 services:
+  - type: web
+    name: career-guidance-v2
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    rootDir: frontend
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://career-guidance-v2-backend.onrender.com
   - type: web
     name: career-guidance-v2-backend
     runtime: docker
