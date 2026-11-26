@@ -1,13 +1,15 @@
-"""Career prediction engine (v2).
+"""Career prediction engine (v2) — K-Nearest Neighbors (KNN).
 
-Improvements over v1:
-- v1 required a pre-trained career_model.pkl on disk; if the file was
-  missing the endpoint crashed. v2 trains the RandomForest in memory at
-  startup on the synthetic dataset generated from the career profiles
-  (same ground-truth patterns as v1), so prediction always works.
-- Match percentages are calibrated: raw model probabilities are blended
-  with profile-similarity and the student's existing-skill overlap, which
-  produces more realistic, spread-out match % values for the UI.
+As per the project design, prediction is KNN-based: the student's
+assessment vector is compared with the stored student dataset and the
+careers of the most similar profiles decide the recommendation.
+- The KNN model is trained in memory at startup on the dataset
+  generated from the career profiles, so prediction always works with
+  no model file needed on disk.
+- Match percentages are calibrated: KNN class probabilities (share of
+  the nearest neighbours per career) are blended with profile-similarity
+  and the student's existing-skill overlap, which produces realistic,
+  spread-out match % values for the UI.
 - If scikit-learn is unavailable, a pure-Python similarity scorer takes
   over — the endpoint never goes down.
 """
@@ -22,11 +24,11 @@ _model_ready = False
 
 
 def _train_in_memory():
-    """Train the RandomForest on synthetic samples around each career profile."""
+    """Train the KNN model on dataset samples around each career profile."""
     global _model, _model_ready
     try:
         import numpy as np
-        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.neighbors import KNeighborsClassifier
 
         rng = np.random.default_rng(42)
         X, y = [], []
@@ -35,7 +37,7 @@ def _train_in_memory():
                 sample = np.clip(np.array(profile, dtype=float) + rng.normal(0, 1.6, len(FEATURES)), 0, 10)
                 X.append(sample)
                 y.append(career)
-        clf = RandomForestClassifier(n_estimators=200, random_state=42, n_jobs=-1)
+        clf = KNeighborsClassifier(n_neighbors=15, weights="distance")
         clf.fit(X, y)
         _model = clf
     except Exception:
@@ -98,4 +100,4 @@ def predict_top_careers(scores: dict, student_skills: list[str] | None = None, t
 
 def engine_name() -> str:
     _ensure_model()
-    return "random-forest" if _model is not None else "profile-similarity"
+    return "knn" if _model is not None else "profile-similarity"

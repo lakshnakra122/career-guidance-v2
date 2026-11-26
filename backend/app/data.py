@@ -193,8 +193,8 @@ KNOWLEDGE_BASE: List[Dict[str, str]] = [
      "text": "Recruiters value 2-3 complete projects over many tutorials. Each project should have: a clear problem statement, "
              "your tech stack, 3-5 bullet points of what YOU built, and a live link + GitHub repo."},
     {"topic": "How the AI works",
-     "text": "This system has three AI parts: 1) A scikit-learn RandomForest model trained on assessment data predicts "
-             "your career domain with match percentages. 2) A recommendation engine does skill-gap analysis and suggests courses, "
+     "text": "This system has three AI parts: 1) A scikit-learn K-Nearest Neighbors (KNN) model compares your assessment "
+             "data with similar student profiles and predicts your career domain with match percentages. 2) A recommendation engine does skill-gap analysis and suggests courses, "
              "projects and roadmaps. 3) An LLM-powered chatbot (with multi-key failover and response caching) answers career "
              "questions, and falls back to a built-in knowledge base when the LLM is unavailable."},
     {"topic": "Study plan tips",
