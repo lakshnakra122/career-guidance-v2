@@ -1,0 +1,26 @@
+# Render Blueprint — backend web service (Docker).
+# Deploy: Render Dashboard -> New -> Blueprint -> select this repo.
+# Then set LLM_API_KEYS (and optionally JWT_SECRET) in the service's
+# Environment tab. The frontend is deployed separately (see README ->
+# "Deploy the frontend") with VITE_API_URL pointing at this service's URL.
+services:
+  - type: web
+    name: career-guidance-v2-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_API_KEYS
+        sync: false
+      - key: LLM_MODEL
+        value: gemini/gemini-3.5-flash-lite
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:////tmp/career_guidance.db
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: ENABLE_FAILURE_SIMULATION
+        value: "true"
