@@ -15,7 +15,7 @@ knowledge base so it always answers.
 
 - **Auth** — JWT register/login, seeded demo student + admin accounts, admin user list.
 - **Profile** — skills, interests, education, CGPA, target career, study hours.
-- **Assessment → Prediction** — RandomForest (trained in memory at startup; profile-similarity
+- **Assessment → Prediction** — K-Nearest Neighbors (KNN) (trained in memory at startup; profile-similarity
   fallback) over 8 features, blended with skill overlap → calibrated top-3 match %.
 - **Skill-Gap Analysis** — coverage %, matched vs missing skills, a course for every gap, project ideas.
 - **Roadmap** — week-by-week plan (default 6 weeks): gap skills sequenced foundations-first,
