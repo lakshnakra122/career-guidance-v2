@@ -38,12 +38,12 @@ export default function Home() {
           <span className="pill">AI-Powered Personalized Learning &amp; Career Recommendation System</span>
           <h1 style={{ marginTop: 16 }}>Find the career that <span className="grad">fits you</span> —<br />then follow the plan to get there.</h1>
           <p className="lead">
-            Take a 2-minute assessment. Our ML model predicts your top-3 careers, maps your skill gaps,
+            Fill a short student form. Our ML model predicts your top-3 careers, maps your skill gaps,
             and builds a personalised 6-week roadmap and study plan — with an AI mentor on chat whenever you are stuck.
           </p>
           <div className="hero-cta">
             <Link className="btn btn-primary" to={user ? '/app/assessment' : '/register'}>
-              {user ? 'Go to Assessment' : 'Start Free Assessment'} →
+              {user ? 'Go to Student Form' : 'Fill the Student Form'} →
             </Link>
             <Link className="btn btn-ghost" to="/careers-preview">Explore Careers</Link>
           </div>

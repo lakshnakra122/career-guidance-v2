@@ -32,7 +32,7 @@ export default function Dashboard() {
             {target ? 'Your chosen target career. Track its skill gap below.' : 'Set a target career in your profile or from your assessment results.'}
           </p>
           <div style={{ marginTop: 12 }}>
-            <Link className="btn btn-ghost btn-sm" to="/app/assessment">Take assessment</Link>
+            <Link className="btn btn-ghost btn-sm" to="/app/assessment">Fill student form</Link>
           </div>
         </div>
         <div className="card">
