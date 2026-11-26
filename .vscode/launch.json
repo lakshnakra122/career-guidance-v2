@@ -1,0 +1,1 @@
+{"configurations":[{"args":["app.main:app","--port","8000"],"cwd":"${workspaceFolder}/backend","jinja":true,"justMyCode":true,"module":"uvicorn","name":"Debug Backend (FastAPI)","request":"launch","type":"debugpy"},{"name":"Open Frontend (Chrome)","request":"launch","type":"chrome","url":"http://localhost:5173","webRoot":"${workspaceFolder}/frontend"}],"version":"0.2.0"}
