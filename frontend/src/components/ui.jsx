@@ -33,7 +33,7 @@ export function TopNav() {
 
 const SIDE_LINKS = [
   { to: '/app', label: 'Dashboard', icon: '🏠', end: true },
-  { to: '/app/assessment', label: 'Assessment', icon: '📝' },
+  { to: '/app/assessment', label: 'Student Form', icon: '📝' },
   { to: '/app/careers', label: 'Careers', icon: '🎯' },
   { to: '/app/skill-gap', label: 'Skill Gap', icon: '🧩' },
   { to: '/app/roadmap', label: 'Roadmap', icon: '🗺️' },
