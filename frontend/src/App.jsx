@@ -11,6 +11,7 @@ import StudyPlan from './pages/StudyPlan'
 import Chat from './pages/Chat'
 import Profile from './pages/Profile'
 import AdminUsers from './pages/AdminUsers'
+import ResumeBuilder from './pages/ResumeBuilder'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AppLayout } from './components/ui'
 
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="chat" element={<Chat />} />
         <Route path="profile" element={<Profile />} />
         <Route path="admin" element={<AdminUsers />} />
+        <Route path="resume" element={<ResumeBuilder />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
