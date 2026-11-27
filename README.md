@@ -9,7 +9,7 @@ with multi-key failover and response caching — and falls back to a built-in
 knowledge base so it always answers.
 
 > **Live URLs:** Frontend: `<FRONTEND_URL>` · Backend: `<BACKEND_URL>` (fill in after deployment)
-> **Demo accounts:** `student@college.edu` / `student123` · `admin@college.edu` / `admin123`
+> **Demo accounts:** `student@college.edu` / `student123` · `admin@college.edu` / `upes123`
 
 ## Features
 
