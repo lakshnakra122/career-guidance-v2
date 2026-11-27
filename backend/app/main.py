@@ -23,7 +23,7 @@ import time
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field, field_validator
 
@@ -33,6 +33,7 @@ from .data import CAREER_META, CAREER_SKILLS, FEATURES, FEATURE_LABELS
 from .llm import ProviderError, call_with_key, messages_token_count, parse_simulate_failure
 from .predictor import engine_name, predict_top_careers
 from .recommendation import full_recommendation, generate_roadmap, generate_study_plan
+from .resume import build_docx, build_pdf, build_tex
 from .security import create_access_token, decode_token, hash_password, verify_password
 
 app = FastAPI(title="AI Career Guidance API", version="2.0.0")
@@ -43,6 +44,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 bearer = HTTPBearer(auto_error=False)
@@ -263,6 +265,65 @@ def study_plan(payload: StudyPlanRequest, user: dict | None = Depends(optional_u
         skills = profile.get("skills", [])
     return generate_study_plan(payload.career, skills, payload.hours_per_day,
                                payload.days_per_week, payload.weeks)
+
+
+# ---------------------------------------------------------------- resume
+class EducationItem(BaseModel):
+    degree: str = ""
+    institution: str = ""
+    dates: str = ""
+    score: str = ""
+
+
+class ProjectItem(BaseModel):
+    title: str = ""
+    context: str = ""
+    tech: str = ""
+    dates: str = ""
+    bullets: list[str] = []
+
+
+class SkillItem(BaseModel):
+    category: str = ""
+    items: str = ""
+
+
+class ResumeRequest(BaseModel):
+    format: str = Field(pattern="^(tex|pdf|docx)$")
+    name: str = Field(min_length=2, max_length=80)
+    tagline: str = ""
+    email: str = ""
+    phone: str = ""
+    location: str = ""
+    linkedin: str = ""
+    github: str = ""
+    summary: str = ""
+    education: list[EducationItem] = []
+    projects: list[ProjectItem] = []
+    skills: list[SkillItem] = []
+    certifications: list[str] = []
+
+
+_RESUME_MEDIA = {
+    "tex": ("application/x-tex", "tex", build_tex),
+    "pdf": ("application/pdf", "pdf", build_pdf),
+    "docx": ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx", build_docx),
+}
+
+
+@app.post("/resume/download")
+def resume_download(payload: ResumeRequest, user: dict = Depends(current_user)):
+    data = payload.model_dump()
+    media, ext, builder = _RESUME_MEDIA[payload.format]
+    try:
+        content = builder(data)
+    except Exception as exc:  # generation library missing/failed
+        raise HTTPException(status_code=500, detail=f"Resume generation failed: {exc}")
+    if isinstance(content, str):
+        content = content.encode("utf-8")
+    slug = "".join(ch if ch.isalnum() else "_" for ch in payload.name.strip().lower()).strip("_") or "resume"
+    return Response(content=content, media_type=media,
+                    headers={"Content-Disposition": f'attachment; filename="resume_{slug}.{ext}"'})
 
 
 # ---------------------------------------------------------------- health
