@@ -241,3 +241,45 @@ def test_chat_unknown_session_404():
 def test_chat_validation():
     r = client.post("/chat", json={"session_id": "s-x", "message": "   "})
     assert r.status_code == 422
+
+
+RESUME_PAYLOAD = {
+    "name": "Test Student",
+    "tagline": "Aspiring Data Scientist",
+    "email": "test@example.com",
+    "phone": "+91 9999999999",
+    "location": "Dehradun, IN",
+    "linkedin": "linkedin.com/in/teststudent",
+    "github": "github.com/teststudent",
+    "summary": "MCA student who likes **data** and Python.",
+    "education": [{"degree": "MCA (Data Science)", "institution": "UPES, Dehradun",
+                   "dates": "2025 -- 2027", "score": "CGPA: 8.1"}],
+    "projects": [{"title": "AI Career Guidance System", "context": "Minor Project | UPES",
+                  "tech": "React, FastAPI, KNN", "dates": "2026",
+                  "bullets": ["Built a **KNN model** to predict careers.", "Added skill-gap analysis."]}],
+    "skills": [{"category": "Programming Languages", "items": "Python, SQL"}],
+    "certifications": ["Kotlin Programming -- Certified Course"],
+}
+
+
+def test_resume_downloads_require_auth():
+    r = client.post("/resume/download", json={**RESUME_PAYLOAD, "format": "pdf"})
+    assert r.status_code in (401, 403)
+
+
+def test_resume_tex():
+    r = client.post("/resume/download", json={**RESUME_PAYLOAD, "format": "tex"},
+                    headers=_auth_headers())
+    assert r.status_code == 200
+    assert "attachment" in r.headers["content-disposition"]
+    assert "TEST STUDENT" in r.text
+    assert "AI Career Guidance System" in r.text
+
+
+def test_resume_pdf_and_docx():
+    for fmt, magic in (("pdf", b"%PDF"), ("docx", b"PK")):
+        r = client.post("/resume/download", json={**RESUME_PAYLOAD, "format": fmt},
+                        headers=_auth_headers())
+        assert r.status_code == 200, fmt
+        assert r.content[:len(magic)] == magic, fmt
+        assert len(r.content) > 1000, fmt
