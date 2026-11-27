@@ -26,7 +26,7 @@ export default function Login() {
 
   function fillDemo(kind) {
     if (kind === 'student') { setEmail('student@college.edu'); setPassword('student123') }
-    else { setEmail('admin@college.edu'); setPassword('admin123') }
+    else { setEmail('admin@college.edu'); setPassword('upes123') }
   }
 
   return (
