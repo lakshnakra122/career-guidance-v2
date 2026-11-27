@@ -58,6 +58,17 @@ export default function Login() {
           <h1 style={{ fontSize: 24 }}>Welcome back 👋</h1>
           <p className="muted">Log in to your dashboard, roadmap and AI mentor.</p>
           {error && <div className="alert alert-error">{error}</div>}
+          {error && error.toLowerCase().includes('not registered') && (
+            <div className="demo-box" style={{ marginBottom: 16 }}>
+              <strong>New here? Follow these steps:</strong>
+              <ol style={{ margin: '8px 0 10px', paddingLeft: 20, lineHeight: 1.7 }}>
+                <li>Click <strong>Create an account</strong> below.</li>
+                <li>Fill your name, this same email, and a new password.</li>
+                <li>Come back here and log in with that email + password.</li>
+              </ol>
+              <Link className="btn btn-primary btn-sm" to="/register">Create an account →</Link>
+            </div>
+          )}
           <form onSubmit={submit}>
             <div className="form-group">
               <label className="field" htmlFor="email">Email</label>
@@ -72,6 +83,11 @@ export default function Login() {
             <button className="btn btn-primary" style={{ width: '100%' }} disabled={busy}>
               {busy ? 'Logging in…' : 'Log in'}
             </button>
+            {busy && (
+              <p className="center muted" style={{ fontSize: 13, marginTop: 10 }}>
+                Please wait — the free server can take 30–60 seconds to wake up the first time.
+              </p>
+            )}
           </form>
           <p className="center muted" style={{ marginTop: 16 }}>
             New here? <Link to="/register">Create an account</Link>
