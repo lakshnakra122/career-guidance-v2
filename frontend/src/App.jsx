@@ -10,6 +10,7 @@ import Roadmap from './pages/Roadmap'
 import StudyPlan from './pages/StudyPlan'
 import Chat from './pages/Chat'
 import Profile from './pages/Profile'
+import AdminUsers from './pages/AdminUsers'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AppLayout } from './components/ui'
 
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="study-plan" element={<StudyPlan />} />
         <Route path="chat" element={<Chat />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="admin" element={<AdminUsers />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
