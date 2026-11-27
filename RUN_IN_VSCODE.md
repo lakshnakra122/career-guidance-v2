@@ -17,7 +17,7 @@ Same one-click flow as the Lyftr assignment project.
 2. **Tasks: Run Task → "Run Frontend (Vite :5173)"**.
 3. Open **http://localhost:5173** in Chrome.
 4. Log in with the demo account: `student@college.edu` / `student123`
-   (admin: `admin@college.edu` / `admin123`), or register your own account.
+   (admin: `admin@college.edu` / `upes123`), or register your own account.
 
 ## Other tasks
 
