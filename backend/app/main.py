@@ -132,8 +132,11 @@ def register(payload: RegisterRequest):
 def login(payload: LoginRequest):
     db.init_db()
     user = db.get_user_by_email(payload.email.strip())
-    if user is None or not verify_password(payload.password, user["password_hash"]):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    if user is None:
+        raise HTTPException(status_code=401,
+                            detail="This email is not registered yet. Please create an account first, then log in.")
+    if not verify_password(payload.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Wrong password for this email. Please try again.")
     token = create_access_token(user["id"], user["email"], user["role"])
     return {"access_token": token, "token_type": "bearer", "user": public_user(user)}
 
