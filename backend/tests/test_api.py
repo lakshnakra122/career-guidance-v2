@@ -52,7 +52,7 @@ def test_demo_student_login():
 
 
 def test_demo_admin_login_and_admin_endpoint():
-    r = client.post("/auth/login", json={"email": "admin@college.edu", "password": "admin123"})
+    r = client.post("/auth/login", json={"email": "admin@college.edu", "password": "upes123"})
     assert r.status_code == 200
     headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
     users = client.get("/admin/users", headers=headers)
