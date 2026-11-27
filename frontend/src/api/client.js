@@ -46,4 +46,5 @@ export const api = {
   studyPlan: (payload) => request('/study-plan', { method: 'POST', body: payload }),
   chat: (payload) => request('/chat', { method: 'POST', body: payload }),
   chatHistory: (sessionId) => request(`/sessions/${encodeURIComponent(sessionId)}/messages`),
+  adminUsers: () => request('/admin/users'),
 }
