@@ -3,6 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { TopNav } from '../components/ui'
 
+// The admin email is intentionally NOT shown anywhere on this page.
+// Admin sign-in works only by entering the admin password (upes123),
+// which is verified by the backend — nothing is revealed to visitors.
+const ADMIN_EMAIL = 'admin@college.edu'
+
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -10,6 +15,10 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showAdmin, setShowAdmin] = useState(false)
+  const [adminPw, setAdminPw] = useState('')
+  const [adminError, setAdminError] = useState('')
+  const [adminBusy, setAdminBusy] = useState(false)
 
   async function submit(e) {
     e.preventDefault()
@@ -24,9 +33,21 @@ export default function Login() {
     }
   }
 
-  function fillDemo(kind) {
-    if (kind === 'student') { setEmail('student@college.edu'); setPassword('student123') }
-    else { setEmail('admin@college.edu'); setPassword('upes123') }
+  async function adminSubmit(e) {
+    e.preventDefault()
+    setAdminBusy(true); setAdminError('')
+    try {
+      await login(ADMIN_EMAIL, adminPw)
+      navigate('/app')
+    } catch {
+      setAdminError('Wrong admin password. Please try again.')
+    } finally {
+      setAdminBusy(false)
+    }
+  }
+
+  function fillDemo() {
+    setEmail('student@college.edu'); setPassword('student123')
   }
 
   return (
@@ -56,15 +77,36 @@ export default function Login() {
             New here? <Link to="/register">Create an account</Link>
           </p>
           <div className="demo-box">
-            <strong>Demo accounts</strong> — click to fill:
+            <strong>Demo account</strong> — click to fill:
             <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => fillDemo('student')}>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={fillDemo}>
                 Student · <code>student@college.edu</code>
               </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => fillDemo('admin')}>
-                Admin · <code>admin@college.edu</code>
-              </button>
             </div>
+          </div>
+
+          <div style={{ marginTop: 18, borderTop: '1px dashed var(--line)', paddingTop: 14 }}>
+            {!showAdmin ? (
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowAdmin(true)}>
+                🔐 Admin login
+              </button>
+            ) : (
+              <form onSubmit={adminSubmit}>
+                <label className="field" htmlFor="admin-pw">Admin password</label>
+                {adminError && <div className="alert alert-error">{adminError}</div>}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input id="admin-pw" className="input" type="password" required value={adminPw}
+                    onChange={(e) => setAdminPw(e.target.value)} placeholder="Enter admin password"
+                    autoFocus style={{ flex: 1 }} />
+                  <button className="btn btn-primary btn-sm" disabled={adminBusy}>
+                    {adminBusy ? 'Checking…' : 'Login as Admin'}
+                  </button>
+                </div>
+                <p className="muted" style={{ fontSize: 12.5, marginBottom: 0 }}>
+                  Only the admin knows this password. Nothing is shown on this page.
+                </p>
+              </form>
+            )}
           </div>
         </div>
       </div>
