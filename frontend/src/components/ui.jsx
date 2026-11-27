@@ -40,6 +40,7 @@ const SIDE_LINKS = [
   { to: '/app/study-plan', label: 'Study Plan', icon: '📅' },
   { to: '/app/chat', label: 'AI Mentor Chat', icon: '🤖' },
   { to: '/app/profile', label: 'Profile', icon: '👤' },
+  { to: '/app/admin', label: 'Users', icon: '👥', adminOnly: true },
 ]
 
 export function AppLayout() {
@@ -48,7 +49,7 @@ export function AppLayout() {
     <div className="shell">
       <aside className="sidebar">
         <Link to="/" style={{ textDecoration: 'none' }}><Logo /></Link>
-        {SIDE_LINKS.map((l) => (
+        {SIDE_LINKS.filter((l) => !l.adminOnly || user?.role === 'admin').map((l) => (
           <NavLink key={l.to} to={l.to} end={l.end}
             className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
             <span>{l.icon}</span> {l.label}
