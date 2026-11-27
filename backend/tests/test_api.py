@@ -68,6 +68,13 @@ def test_admin_endpoint_forbidden_for_student():
 def test_login_wrong_password():
     r = client.post("/auth/login", json={"email": "student@college.edu", "password": "wrong"})
     assert r.status_code == 401
+    assert "Wrong password" in r.json()["detail"]
+
+
+def test_login_unregistered_email_guides_to_register():
+    r = client.post("/auth/login", json={"email": "someone@gmail.com", "password": "whatever1"})
+    assert r.status_code == 401
+    assert "not registered" in r.json()["detail"]
 
 
 def test_register_and_me():
