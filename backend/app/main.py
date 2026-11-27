@@ -49,7 +49,7 @@ bearer = HTTPBearer(auto_error=False)
 
 DEMO_USERS = [
     ("Demo Student", "student@college.edu", "student123", "student"),
-    ("Demo Admin", "admin@college.edu", "admin123", "admin"),
+    ("Demo Admin", "admin@college.edu", "upes123", "admin"),
 ]
 
 
