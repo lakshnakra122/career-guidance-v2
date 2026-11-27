@@ -11,19 +11,27 @@ export function setToken(token) {
   else localStorage.removeItem('cg_token')
 }
 
-async function request(path, { method = 'GET', body, auth = true } = {}) {
+async function request(path, { method = 'GET', body, auth = true, timeoutMs = 0 } = {}) {
   const headers = { 'Content-Type': 'application/json' }
   const token = getToken()
   if (auth && token) headers.Authorization = `Bearer ${token}`
+  const controller = timeoutMs ? new AbortController() : null
+  const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null
   let res
   try {
     res = await fetch(`${API_URL}${path}`, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: controller ? controller.signal : undefined,
     })
-  } catch {
+  } catch (err) {
+    if (err && err.name === 'AbortError') {
+      throw new Error('The server is taking too long to respond — it may be waking up. Please wait a few seconds and try again.')
+    }
     throw new Error('Cannot reach the server. Is the backend running?')
+  } finally {
+    if (timer) clearTimeout(timer)
   }
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
@@ -34,8 +42,8 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
 
 export const api = {
   health: () => request('/health', { auth: false }),
-  register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false }),
-  login: (payload) => request('/auth/login', { method: 'POST', body: payload, auth: false }),
+  register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false, timeoutMs: 60000 }),
+  login: (payload) => request('/auth/login', { method: 'POST', body: payload, auth: false, timeoutMs: 60000 }),
   me: () => request('/users/me'),
   getProfile: () => request('/students/profile'),
   saveProfile: (payload) => request('/students/profile', { method: 'PUT', body: payload }),
