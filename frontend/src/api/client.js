@@ -47,4 +47,25 @@ export const api = {
   chat: (payload) => request('/chat', { method: 'POST', body: payload }),
   chatHistory: (sessionId) => request(`/sessions/${encodeURIComponent(sessionId)}/messages`),
   adminUsers: () => request('/admin/users'),
+  downloadResume: async (payload) => {
+    const headers = { 'Content-Type': 'application/json' }
+    const token = getToken()
+    if (token) headers.Authorization = `Bearer ${token}`
+    let res
+    try {
+      res = await fetch(`${API_URL}/resume/download`, {
+        method: 'POST', headers, body: JSON.stringify(payload),
+      })
+    } catch {
+      throw new Error('Cannot reach the server. Is the backend running?')
+    }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      throw new Error(data.detail || `Request failed (${res.status})`)
+    }
+    const blob = await res.blob()
+    const cd = res.headers.get('Content-Disposition') || ''
+    const m = cd.match(/filename="([^"]+)"/)
+    return { blob, filename: m ? m[1] : `resume.${payload.format}` }
+  },
 }
