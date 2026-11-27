@@ -39,6 +39,7 @@ const SIDE_LINKS = [
   { to: '/app/roadmap', label: 'Roadmap', icon: '🗺️' },
   { to: '/app/study-plan', label: 'Study Plan', icon: '📅' },
   { to: '/app/chat', label: 'AI Mentor Chat', icon: '🤖' },
+  { to: '/app/resume', label: 'Resume', icon: '📄' },
   { to: '/app/profile', label: 'Profile', icon: '👤' },
   { to: '/app/admin', label: 'Users', icon: '👥', adminOnly: true },
 ]
